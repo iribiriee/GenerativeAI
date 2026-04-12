@@ -58,15 +58,30 @@ def naiveReconstruction(points, normals, X, Y, Z):
     # <================START MODIFYING CODE<================>
     ##########################################################
 
-    # replace this random implicit function with your naive surface reconstruction implementation!
-    IF = np.random.rand(X.shape[0], X.shape[1], X.shape[2]) - 0.5
-
-    # this is an example of a kd-tree nearest neighbor search (adapt it accordingly for your task)
-	# use kd-trees to find nearest neighbors efficiently!
-	# kd-tree: https://en.wikipedia.org/wiki/K-d_tree
-    Q = np.array([X.reshape(-1), Y.reshape(-1), Z.reshape(-1)]).transpose()
+    # 1. Flatten the grid into a list of 3D query points (Q)
+    Q = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1)
+    
+    # 2. Build the KDTree to find the nearest neighbor for each query point
     tree = KDTree(points)
-    _, idx = tree.query(Q, k=2)  
+    
+    # We only need the single nearest neighbor (k=1)
+    # dists: Euclidean distance (not used here, but returned by query)
+    # idx: The index of the nearest point in the 'points' array
+    _, idx = tree.query(Q, k=1)
+    idx = idx.flatten() # Make it a 1D array of indices
+
+    # 3. Apply the formula: f(p) = n_j · (p - p_j)
+    # p is the grid point (Q), pj is the nearest surface point, nj is its normal
+    pj = points[idx]
+    nj = normals[idx]
+    
+    # Perform the dot product: sum((Q - pj) * nj)
+    # This calculates the signed distance to the tangent plane
+    sdf_flat = np.sum((Q - pj) * nj, axis=1)
+
+    # 4. Reshape the flat SDF back into the 3D grid shape (NxNxN)
+    IF = sdf_flat.reshape(X.shape)
+    
 	
     ##########################################################
     # <================END MODIFYING CODE<================>

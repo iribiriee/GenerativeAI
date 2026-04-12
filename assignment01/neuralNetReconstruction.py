@@ -4,8 +4,11 @@ import argparse
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
+import torch.nn.functional as F
 from model import Decoder
 from utils import normalize_pts, normalize_normals, SdfDataset, mkdir_p, showMeshReconstruction
+
+# added import torch.nn.functional as F to the top to handle the loss calculation
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -34,9 +37,15 @@ def train(dataset, model, optimizer, args):
         # <================START MODIFYING CODE<================>
         ##########################################################       
         # **** YOU SHOULD ADD TRAINING CODE FOR THE LOSS HERE, CURRENTLY IT IS INCORRECT ****
-        loss_sum += 1. * xyz_tensor.shape[0]
+        gt_sdf_tensor = data['gt_sdf'].to(device)
+        
+        # DeepSDF typically uses L1 loss for better surface convergence
+        loss = F.l1_loss(pred_sdf_tensor, gt_sdf_tensor)
+        
+        loss.backward()
+        
+        loss_sum += loss.item() * xyz_tensor.shape[0]
         loss_count += xyz_tensor.shape[0]
-        # ***********************************************************************
         ##########################################################
         # <================END MODIFYING CODE<================>
         ##########################################################       
@@ -62,10 +71,13 @@ def val(dataset, model, optimizer, args):
         ##########################################################              
         # **** YOU SHOULD ADD VALIDATION CODE HERE, CURRENTLY IT IS INCORRECT ****
         with torch.no_grad():
-            xyz_tensor = data['xyz'].to(device)
-            loss_sum += 1. * xyz_tensor.shape[0]
+            gt_sdf_tensor = data['gt_sdf'].to(device)
+            pred_sdf_tensor = model(xyz_tensor)
+            
+            loss = F.l1_loss(pred_sdf_tensor, gt_sdf_tensor)
+            
+            loss_sum += loss.item() * xyz_tensor.shape[0]
             loss_count += xyz_tensor.shape[0]
-        # ***********************************************************************
         ##########################################################
         # <================END MODIFYING CODE<================>
         ##########################################################             
