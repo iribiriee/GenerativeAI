@@ -9,9 +9,9 @@ This repository contains the assignments and the midterm project for the **Gener
     * Geometric reconstruction using Tangent Plane estimation.
     * Neural Implicit Surface learning using a DeepSDF-style MLP with skip connections.
 * **Assignment 2: Upcoming**
-    * *To be updated upon release.*
+    * *To be updated.*
 * **Midterm Project: Upcoming**
-    * *To be updated upon release.*
+    * *To be updated.*
 
 ---
 
