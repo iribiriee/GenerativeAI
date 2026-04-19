@@ -2,20 +2,20 @@
 
 This repository contains the assignments and the midterm project for the **Generative AI** course at the Technical University of Crete. The curriculum focuses on the mathematical foundations and deep learning architectures used to synthesize 3D geometry and 2D content.
 
-## 📂 Repository Structure
+##  Repository Structure
 
 * **Assignment 1: 3D Surface Reconstruction**
     * Implementation of Implicit Functions for 3D shape generation.
     * Geometric reconstruction using Tangent Plane estimation.
     * Neural Implicit Surface learning using a DeepSDF-style MLP with skip connections.
-* **Assignment 2: [Upcoming]**
+* **Assignment 2: Upcoming**
     * *To be updated upon release.*
-* **Midterm Project: [Upcoming]**
+* **Midterm Project: Upcoming**
     * *To be updated upon release.*
 
 ---
 
-## 🛠️ Assignment 1: Neural Implicit Surfaces
+##  Assignment 1: Neural Implicit Surfaces
 
 ### Overview
 Given a sparse point cloud $P$, we define an implicit function $f(x,y,z)$ to measure the signed distance to the surface. The surface is then extracted at $f(x,y,z) = 0$ using the **Marching Cubes** algorithm.
